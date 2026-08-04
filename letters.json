@@ -1,0 +1,12 @@
+{
+  "letters": [
+    {"key": "happy", "title": "Happy", "when": "open this when you're", "seal": "H", "body": [], "sign": "", "photo": null},
+    {"key": "sad", "title": "Sad", "when": "open this when you're", "seal": "S", "body": [], "sign": "", "photo": null},
+    {"key": "lonely", "title": "Lonely", "when": "open this when you're", "seal": "L", "body": [], "sign": "", "photo": null},
+    {"key": "exhausted", "title": "Exhausted", "when": "open this when you're", "seal": "E", "body": [], "sign": "", "photo": null},
+    {"key": "angry", "title": "Angry", "when": "open this when you're", "seal": "A", "body": [], "sign": "", "photo": null},
+    {"key": "overwhelmed", "title": "Overwhelmed", "when": "open this when you're", "seal": "O", "body": [], "sign": "", "photo": null},
+    {"key": "missing_me", "title": "Missing Me", "when": "open this when you're", "seal": "M", "body": [], "sign": "", "photo": null},
+    {"key": "just_because", "title": "Just Need This Today", "when": "open this when you", "seal": "♡", "body": [], "sign": "", "photo": null}
+  ]
+}
