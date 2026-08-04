@@ -1,4 +1,4 @@
-import streamlit as st
+    import streamlit as st
 import json
 import base64
 import os
@@ -6,7 +6,7 @@ from pathlib import Path
 from io import BytesIO
 from PIL import Image
 
-DATA_PATH = Path(__file__).parent / "data" / "letters.json"
+DATA_PATH = Path(__file__).parent / "letters.json"
 
 st.set_page_config(page_title="Letters for your Heart", page_icon="💌", layout="wide")
 
@@ -141,7 +141,7 @@ with st.sidebar:
     if not st.session_state.edit_unlocked:
         pw = st.text_input("Edit password", type="password")
         if st.button("Unlock editing"):
-            correct = st.secrets.get("EDIT_PASSWORD", "changeme")
+            correct = st.secrets.get("EDIT_PASSWORD", "301205")
             if pw == correct:
                 st.session_state.edit_unlocked = True
                 st.rerun()
