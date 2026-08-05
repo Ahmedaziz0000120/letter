@@ -6,6 +6,8 @@ from pathlib import Path
 from io import BytesIO
 from PIL import Image
 
+from emoji_assets import EMOJI_IMAGES
+
 DATA_PATH = Path(__file__).parent / "letters.json"
 
 st.set_page_config(page_title="Letters for your Heart", page_icon="💌", layout="wide")
@@ -72,7 +74,7 @@ TILT = [-3, -1.5, 1.5, 3, -2, 2, -1, 1]
 
 st.markdown(
     """
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;1,9..144,600&family=Literata:ital,opsz@0,16..30;1,16..30&family=Caveat:wght@500;600;700&family=Shadows+Into+Light&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;1,9..144,600&family=Literata:ital,opsz@0,16..30;1,16..30&family=Caveat:wght@500;600;700&family=Shadows+Into+Light&family=Baloo+2:wght@600;700&display=swap" rel="stylesheet">
     <style>
         html, body, [class*="css"]  { font-family: 'Literata', serif; }
 
@@ -126,10 +128,52 @@ st.markdown(
         }
 
         /* ---------- mood picker ---------- */
-        .mood-label {
-            text-align:center; color:#C24E70; letter-spacing:0.12em; text-transform:uppercase;
-            font-size:13px; font-weight:600; margin: 18px 0 14px;
+        .mood-grid-wrap {
+            background-color: #EEF3E2;
+            background-image:
+                repeating-linear-gradient(0deg,  rgba(255,255,255,0.8) 0px, rgba(255,255,255,0.8) 20px, transparent 20px, transparent 40px),
+                repeating-linear-gradient(90deg, rgba(255,255,255,0.8) 0px, rgba(255,255,255,0.8) 20px, transparent 20px, transparent 40px),
+                repeating-linear-gradient(0deg,  rgba(150,181,110,0.4) 0px, rgba(150,181,110,0.4) 20px, transparent 20px, transparent 40px),
+                repeating-linear-gradient(90deg, rgba(150,181,110,0.4) 0px, rgba(150,181,110,0.4) 20px, transparent 20px, transparent 40px);
+            border-radius: 22px;
+            padding: 34px 20px 26px;
+            box-shadow: 0 26px 50px -28px rgba(59,20,35,0.35);
+            margin: 10px 0 28px;
+            animation: fadeInUp 0.6s ease both;
         }
+        .mood-label {
+            text-align:center; color:#2E2130; font-family:'Baloo 2', cursive;
+            font-size:32px; font-weight:700; margin: 0 0 20px;
+        }
+        .mood-grid-wrap div.stButton > button {
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            border-radius: 16px;
+            padding: 26px 8px 14px;
+            font-family: 'Baloo 2', cursive;
+            font-weight: 600;
+            font-size: 21px;
+            color: #2E2130;
+            width: 100%;
+            position: relative;
+            transition: transform 0.2s cubic-bezier(.34,1.56,.64,1);
+            animation: popIn 0.5s cubic-bezier(.34,1.56,.64,1) both;
+        }
+        .mood-grid-wrap div.stButton > button p::first-line { font-size: 60px; line-height: 1.3; }
+        .mood-grid-wrap div.stButton > button:hover {
+            transform: translateY(-6px) scale(1.06);
+            color: #2E2130;
+        }
+        .mood-grid-wrap div.stButton > button:active { transform: translateY(-2px) scale(0.98); }
+        /* image-backed mood buttons: the real emoji PNG replaces the text glyph */
+        .mood-grid-wrap .mood-btn-img button {
+            padding: 108px 6px 10px !important;
+            background-repeat: no-repeat;
+            background-position: top 2px center;
+            background-size: 92px 92px;
+        }
+        .mood-grid-wrap .mood-btn-img button p::first-line { font-size: 21px; line-height: 1.3; }
         div.stButton > button {
             background: #FFFDFB;
             border: 2px solid rgba(226,110,140,0.35);
@@ -321,19 +365,39 @@ def render_reader():
             )
         return
 
-    st.markdown('<p class="mood-label">— tell me how your heart feels —</p>', unsafe_allow_html=True)
+    st.markdown('<div class="mood-grid-wrap">', unsafe_allow_html=True)
+    st.markdown('<p class="mood-label">Tell me how your heart feels.</p>', unsafe_allow_html=True)
 
     if not available:
         st.info("No letters have been written yet. The owner can unlock editing from the sidebar.")
+        st.markdown('</div>', unsafe_allow_html=True)
         return
+
+    # Per-button background-image rules, keyed by a stable wrapper class rather than
+    # nth-of-type — Streamlit's column layout reuses the same 4 column containers in
+    # round-robin, which makes nth-of-type ambiguous once a mood has an image.
+    style_rules = []
+    for i, l in enumerate(available):
+        if l.get("key") in EMOJI_IMAGES:
+            style_rules.append(
+                f'.mood-btn-{i} button {{ background-image: url("{EMOJI_IMAGES[l["key"]]}"); }}'
+            )
+    if style_rules:
+        st.markdown(f"<style>{''.join(style_rules)}</style>", unsafe_allow_html=True)
 
     cols = st.columns(4)
     for i, l in enumerate(available):
+        has_image = l.get("key") in EMOJI_IMAGES
         with cols[i % 4]:
-            label = f"{emoji_for(l)}\n\n{l['title']}"
+            wrap_class = f"mood-btn-img mood-btn-{i}" if has_image else f"mood-btn-{i}"
+            st.markdown(f'<div class="{wrap_class}">', unsafe_allow_html=True)
+            label = l["title"].lower() if has_image else f"{emoji_for(l)}\n\n{l['title']}"
             if st.button(label, key=f"open_{l['key']}"):
                 st.session_state.selected = l["key"]
                 st.rerun()
+            st.markdown('</div>', unsafe_allow_html=True)
+
+    st.markdown('</div>', unsafe_allow_html=True)
 
 
 # ---------------------------------------------------------------------------
