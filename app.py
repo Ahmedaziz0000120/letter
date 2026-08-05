@@ -1,12 +1,9 @@
 import streamlit as st
 import json
 import base64
-import random
 from pathlib import Path
 from io import BytesIO
 from PIL import Image
-
-from emoji_assets import EMOJI_IMAGES
 
 DATA_PATH = Path(__file__).parent / "letters.json"
 
@@ -166,14 +163,6 @@ st.markdown(
             color: #2E2130;
         }
         .mood-grid-wrap div.stButton > button:active { transform: translateY(-2px) scale(0.98); }
-        /* image-backed mood buttons: the real emoji PNG replaces the text glyph */
-        .mood-grid-wrap .mood-btn-img button {
-            padding: 108px 6px 10px !important;
-            background-repeat: no-repeat;
-            background-position: top 2px center;
-            background-size: 92px 92px;
-        }
-        .mood-grid-wrap .mood-btn-img button p::first-line { font-size: 21px; line-height: 1.3; }
         div.stButton > button {
             background: #FFFDFB;
             border: 2px solid rgba(226,110,140,0.35);
@@ -373,25 +362,11 @@ def render_reader():
         st.markdown('</div>', unsafe_allow_html=True)
         return
 
-    # Per-button background-image rules, keyed by a stable wrapper class rather than
-    # nth-of-type — Streamlit's column layout reuses the same 4 column containers in
-    # round-robin, which makes nth-of-type ambiguous once a mood has an image.
-    style_rules = []
-    for i, l in enumerate(available):
-        if l.get("key") in EMOJI_IMAGES:
-            style_rules.append(
-                f'.mood-btn-{i} button {{ background-image: url("{EMOJI_IMAGES[l["key"]]}"); }}'
-            )
-    if style_rules:
-        st.markdown(f"<style>{''.join(style_rules)}</style>", unsafe_allow_html=True)
-
     cols = st.columns(4)
     for i, l in enumerate(available):
-        has_image = l.get("key") in EMOJI_IMAGES
         with cols[i % 4]:
-            wrap_class = f"mood-btn-img mood-btn-{i}" if has_image else f"mood-btn-{i}"
-            st.markdown(f'<div class="{wrap_class}">', unsafe_allow_html=True)
-            label = l["title"].lower() if has_image else f"{emoji_for(l)}\n\n{l['title']}"
+            st.markdown(f'<div class="mood-btn-{i}">', unsafe_allow_html=True)
+            label = f"{emoji_for(l)}\n\n{l['title']}"
             if st.button(label, key=f"open_{l['key']}"):
                 st.session_state.selected = l["key"]
                 st.rerun()
