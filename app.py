@@ -73,7 +73,10 @@ st.markdown(
     """
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;1,9..144,600&family=Literata:ital,opsz@0,16..30;1,16..30&family=Caveat:wght@500;600;700&family=Shadows+Into+Light&family=Baloo+2:wght@600;700&display=swap" rel="stylesheet">
     <style>
+        :root { color-scheme: light only; }
         html, body, [class*="css"]  { font-family: 'Literata', serif; }
+        [data-testid="stSidebar"] { background: #FFF6EF !important; }
+        [data-testid="stSidebar"] * { color: #3B1F2B !important; }
 
         /* ---------- gingham backdrop ---------- */
         .stApp {
@@ -182,18 +185,20 @@ st.markdown(
             background: #FFFDFB;
             border: 2px solid rgba(226,110,140,0.35);
             border-radius: 20px;
-            padding: 26px 8px 18px;
+            padding: 30px 10px 20px;
             font-family: 'Fraunces', serif;
-            font-weight: 600;
-            font-size: 15px;
+            font-weight: 700;
+            font-size: 16px;
             color: #3B1F2B;
             width: 100%;
             box-shadow: 0 14px 22px -14px rgba(200,60,100,0.45);
             transition: transform 0.2s cubic-bezier(.34,1.56,.64,1), box-shadow 0.2s ease, border-color 0.2s ease;
             animation: popIn 0.5s cubic-bezier(.34,1.56,.64,1) both;
             white-space: pre-line;
+            gap: 8px;
         }
-        div.stButton > button p { font-size: 15px !important; white-space: pre-line; }
+        div.stButton > button p { font-size: 16px !important; white-space: pre-line; line-height: 1.4; }
+        div.stButton > button p::first-line { font-size: 42px; line-height: 1.6; }
         div.stButton > button:hover {
             border-color:#E8607E;
             color:#C24E70;
@@ -286,7 +291,8 @@ st.markdown(
             animation-delay: 0.15s;
             opacity: 0.9;
         }
-        .taped-photo img { width:100%; display:block; }
+        .taped-photo img { width:100%; display:block; cursor: zoom-in; }
+        .taped-photo a { display:block; }
         .empty-photo {
             --tilt: -2deg;
             border: 2px dashed rgba(226,110,140,0.45); border-radius: 10px; background: rgba(255,255,255,0.5);
@@ -302,7 +308,7 @@ st.markdown(
         div.stButton > button {
             width: 100% !important;
             box-sizing: border-box !important;
-            min-height: 136px !important;
+            min-height: 150px !important;
             display: flex !important;
             flex-direction: column !important;
             align-items: center !important;
@@ -386,7 +392,9 @@ def render_reader():
         with left:
             if letter.get("photo"):
                 st.markdown(
-                    f'<div class="taped-photo" style="--tilt:{tilt}deg;"><img src="{letter["photo"]}"></div>',
+                    f'<div class="taped-photo" style="--tilt:{tilt}deg;">'
+                    f'<a href="{letter["photo"]}" target="_blank" title="Click to view full size">'
+                    f'<img src="{letter["photo"]}"></a></div>',
                     unsafe_allow_html=True,
                 )
             else:
