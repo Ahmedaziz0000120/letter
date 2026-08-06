@@ -1,6 +1,6 @@
 {
   "letters": [
-    {"key": "happy", "title": "Happy", "when": "open this when you're", "seal": "🥹", "body": [], "sign": "", "photo": null},
+    {"key": "happy", "title": "Happy", "when": "open this when you're", "seal": "😊", "body": [], "sign": "", "photo": null},
     {"key": "sad", "title": "Sad", "when": "open this when you're", "seal": "😔", "body": [], "sign": "", "photo": null},
     {"key": "lonely", "title": "Lonely", "when": "open this when you're", "seal": "🥺", "body": [], "sign": "", "photo": null},
     {"key": "exhausted", "title": "Exhausted", "when": "open this when you're", "seal": "😮‍💨", "body": [], "sign": "", "photo": null},

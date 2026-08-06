@@ -35,7 +35,7 @@ def image_to_data_uri(uploaded_file, max_size=900):
 # Big expressive emoji per mood, with a few sensible fallbacks so new moods
 # the owner adds later still get *something* cute instead of a blank.
 MOOD_EMOJI = {
-    "happy": "🥹💕",
+    "happy": "😊💕",
     "sad": "😔",
     "lonely": "🥺",
     "exhausted": "😮\u200d💨",
@@ -209,6 +209,14 @@ st.markdown(
         }
         .nav-link button:hover { color:#E8607E !important; transform: translateY(-1px) !important; text-decoration: underline; }
 
+        /* ---------- editor readability (labels/expanders default to a pale grey) ---------- */
+        [data-testid="stExpander"] summary, [data-testid="stExpander"] * { color: #3B1F2B !important; }
+        [data-testid="stExpander"] { background: rgba(255,255,255,0.55); border-radius: 12px; }
+        .stTextInput label, .stTextArea label, .stFileUploader label,
+        .stColorPicker label, .stForm label { color: #3B1F2B !important; font-weight: 600; }
+        [data-testid="stCaptionContainer"] { color: rgba(59,31,43,0.7) !important; }
+        h1, h2, h3, h4 { color: #3B1F2B !important; }
+
         /* ---------- letter paper, stamp edge ---------- */
         .letter-paper {
             background:#FFFCF8;
@@ -270,6 +278,20 @@ st.markdown(
         }
 
         /* mood grid emoji-forward buttons get a slight stagger via order in DOM already */
+
+        /* ---------- final override: guarantee uniform mood-card sizing ----------
+           (placed last so it always wins the cascade over earlier duplicate rules) */
+        div.stButton > button {
+            width: 100% !important;
+            box-sizing: border-box !important;
+            min-height: 136px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            white-space: normal !important;
+            text-align: center !important;
+        }
     </style>
     """,
     unsafe_allow_html=True,
