@@ -48,7 +48,7 @@ FALLBACK_EMOJI = ["💌", "🌷", "✨", "🎀"]
 
 
 def emoji_for(letter):
-    if letter.get("seal") and len(letter["seal"]) <= 2 and not letter["seal"].isalnum():
+    if letter.get("seal") and not letter["seal"].strip().isalnum():
         return letter["seal"]
     key = letter.get("key", "")
     if key in MOOD_EMOJI:
@@ -212,6 +212,31 @@ st.markdown(
         /* ---------- editor readability (labels/expanders default to a pale grey) ---------- */
         [data-testid="stExpander"] summary, [data-testid="stExpander"] * { color: #3B1F2B !important; }
         [data-testid="stExpander"] { background: rgba(255,255,255,0.55); border-radius: 12px; }
+
+        /* force light, readable form fields regardless of system/browser dark mode */
+        [data-testid="stTextInput"] input,
+        [data-testid="stTextArea"] textarea,
+        [data-testid="stColorPicker"] input,
+        [data-baseweb="input"] input,
+        [data-baseweb="textarea"] textarea,
+        [data-baseweb="base-input"] {
+            background: #FFFDFB !important;
+            color: #3B1F2B !important;
+            border: 1px solid rgba(59,31,43,0.25) !important;
+            -webkit-text-fill-color: #3B1F2B !important;
+            caret-color: #3B1F2B !important;
+        }
+        [data-testid="stTextInput"] input::placeholder,
+        [data-testid="stTextArea"] textarea::placeholder {
+            color: rgba(59,31,43,0.4) !important;
+            -webkit-text-fill-color: rgba(59,31,43,0.4) !important;
+        }
+        [data-testid="stFileUploaderDropzone"] {
+            background: rgba(255,255,255,0.6) !important;
+            color: #3B1F2B !important;
+        }
+        [data-testid="stFileUploaderDropzone"] * { color: #3B1F2B !important; }
+        [data-testid="stFileUploaderDropzoneInstructions"] span { color: rgba(59,31,43,0.6) !important; }
         .stTextInput label, .stTextArea label, .stFileUploader label,
         .stColorPicker label, .stForm label { color: #3B1F2B !important; font-weight: 600; }
         [data-testid="stCaptionContainer"] { color: rgba(59,31,43,0.7) !important; }
