@@ -248,21 +248,14 @@ st.markdown(
             background-image: linear-gradient(rgba(59,31,43,0.06) 1px, transparent 1px);
             background-size: 100% 32px;
             padding: 46px 46px 40px;
+            border-radius: 10px;
             box-shadow: 0 26px 55px -22px rgba(59,20,35,0.4);
             position: relative;
             animation: fadeInUp 0.55s ease both;
-            -webkit-mask-image:
-                radial-gradient(circle 9px at 9px 9px, transparent 9px, black 9.5px),
-                radial-gradient(circle 9px at 9px 9px, transparent 9px, black 9.5px);
-            -webkit-mask-position: top left, bottom left;
-            -webkit-mask-size: 18px 18px;
-            -webkit-mask-repeat: repeat-x, repeat-x;
-            mask-image:
-                radial-gradient(circle 9px at 9px 9px, transparent 9px, black 9.5px),
-                radial-gradient(circle 9px at 9px 9px, transparent 9px, black 9.5px);
-            mask-position: top left, bottom left;
-            mask-size: 18px 18px;
-            mask-repeat: repeat-x, repeat-x;
+            clip-path: polygon(
+                0% 2.5%,3% 0%,6% 2.5%,9% 0%,12% 2.5%,15% 0%,18% 2.5%,21% 0%,24% 2.5%,27% 0%,30% 2.5%,33% 0%,36% 2.5%,39% 0%,42% 2.5%,45% 0%,48% 2.5%,51% 0%,54% 2.5%,57% 0%,60% 2.5%,63% 0%,66% 2.5%,69% 0%,72% 2.5%,75% 0%,78% 2.5%,81% 0%,84% 2.5%,87% 0%,90% 2.5%,93% 0%,96% 2.5%,99% 0%,100% 2.5%,
+                100% 97.5%,97% 100%,94% 97.5%,91% 100%,88% 97.5%,85% 100%,82% 97.5%,79% 100%,76% 97.5%,73% 100%,70% 97.5%,67% 100%,64% 97.5%,61% 100%,58% 97.5%,55% 100%,52% 97.5%,49% 100%,46% 97.5%,43% 100%,40% 97.5%,37% 100%,34% 97.5%,31% 100%,28% 97.5%,25% 100%,22% 97.5%,19% 100%,16% 97.5%,13% 100%,10% 97.5%,7% 100%,4% 97.5%,1% 100%,0% 97.5%
+            );
         }
         .letter-eyebrow { font-family:'Shadows Into Light', cursive; font-size:20px; color:#C24E70; }
         .letter-title { font-family:'Fraunces', serif; font-style:italic; font-weight:600; font-size:34px; color:#3B1F2B; margin: 2px 0 18px; }
