@@ -142,6 +142,21 @@ st.markdown(
             text-align:center; color:#2E2130; font-family:'Baloo 2', cursive;
             font-size:32px; font-weight:700; margin: 0 0 20px;
         }
+        header[data-testid="stHeader"] { background: transparent !important; height: 0 !important; }
+        .main .block-container { padding-top: 1.2rem !important; }
+
+        div[data-testid="stButton"] { width: 100%; }
+        div.stButton > button {
+            min-height: 128px;
+            display: flex !important;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .mood-grid-wrap div.stButton > button {
+            min-height: 150px;
+        }
+
         .mood-grid-wrap div.stButton > button {
             background: transparent;
             border: none;
