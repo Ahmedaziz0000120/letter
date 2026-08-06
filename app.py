@@ -465,7 +465,7 @@ def render_editor():
 
             photo_col1, photo_col2 = st.columns([1, 1])
             with photo_col1:
-                uploaded = st.file_uploader("Photo for this letter", type=["png", "jpg", "jpeg"], key=f"upload_{idx}")
+                uploaded = st.file_uploader("Photo for this letter", type=["png", "jpg", "jpeg", "webp"], key=f"upload_{idx}")
             with photo_col2:
                 if letter.get("photo"):
                     st.image(letter["photo"], width=140)
