@@ -1,6 +1,7 @@
 import streamlit as st
 import json
 import base64
+import requests
 from pathlib import Path
 from io import BytesIO
 from PIL import Image
@@ -18,9 +19,44 @@ def load_letters():
         return json.load(f)["letters"]
 
 
+def push_to_github(content_str):
+    """Commit the current letters.json back to the GitHub repo so it survives
+    app restarts/redeploys, which wipe anything only saved to local disk."""
+    token = st.secrets.get("GITHUB_TOKEN")
+    repo = st.secrets.get("GITHUB_REPO")          # e.g. "ahmedaziz0000120/letter"
+    branch = st.secrets.get("GITHUB_BRANCH", "main")
+    path = st.secrets.get("GITHUB_FILE_PATH", "letters.json")
+    if not token or not repo:
+        return None  # sync not configured — silently skip, local save still works this session
+
+    api_url = f"https://api.github.com/repos/{repo}/contents/{path}"
+    headers = {"Authorization": f"token {token}", "Accept": "application/vnd.github+json"}
+    try:
+        r = requests.get(api_url, headers=headers, params={"ref": branch}, timeout=10)
+        sha = r.json().get("sha") if r.status_code == 200 else None
+        payload = {
+            "message": "Update letters.json from the app",
+            "content": base64.b64encode(content_str.encode()).decode(),
+            "branch": branch,
+        }
+        if sha:
+            payload["sha"] = sha
+        r2 = requests.put(api_url, headers=headers, json=payload, timeout=10)
+        return r2.status_code in (200, 201)
+    except Exception:
+        return False
+
+
 def save_letters(letters):
+    content = json.dumps({"letters": letters}, indent=2, ensure_ascii=False)
     with open(DATA_PATH, "w") as f:
-        json.dump({"letters": letters}, f, indent=2)
+        f.write(content)
+    synced = push_to_github(content)
+    if synced is True:
+        st.toast("Saved and backed up to GitHub ✓", icon="💾")
+    elif synced is False:
+        st.toast("Saved locally, but GitHub backup failed — check your secrets", icon="⚠️")
+    # synced is None => GitHub sync not configured, say nothing (expected for local dev)
 
 
 def image_to_data_uri(uploaded_file, max_size=900):
@@ -56,8 +92,11 @@ def emoji_for(letter):
     return FALLBACK_EMOJI[hash(key) % len(FALLBACK_EMOJI)]
 
 
-if "letters" not in st.session_state:
+try:
     st.session_state.letters = load_letters()
+except Exception:
+    if "letters" not in st.session_state:
+        st.session_state.letters = []
 if "selected" not in st.session_state:
     st.session_state.selected = None
 if "edit_unlocked" not in st.session_state:
