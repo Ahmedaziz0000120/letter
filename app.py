@@ -59,7 +59,25 @@ def save_letters(letters):
     # synced is None => GitHub sync not configured, say nothing (expected for local dev)
 
 
-def image_to_data_uri(uploaded_file, max_size=900):
+def image_to_data_uri(uploaded_file, max_size=900, max_gif_bytes=6 * 1024 * 1024):
+    """Photos get resized/recompressed to JPEG. GIFs are kept as-is (raw bytes,
+    animation intact) since re-encoding through PIL would flatten them to a
+    single static frame. Large GIFs are rejected rather than silently broken,
+    since a 20MB+ blob embedded as base64 will noticeably slow the page down."""
+    name = (uploaded_file.name or "").lower()
+    is_gif = name.endswith(".gif") or uploaded_file.type == "image/gif"
+
+    if is_gif:
+        raw = uploaded_file.getvalue()
+        if len(raw) > max_gif_bytes:
+            st.error(
+                f"That GIF is {len(raw) / 1024 / 1024:.1f}MB — please use one under "
+                f"{max_gif_bytes / 1024 / 1024:.0f}MB so the page still loads quickly."
+            )
+            return None
+        b64 = base64.b64encode(raw).decode()
+        return f"data:image/gif;base64,{b64}"
+
     img = Image.open(uploaded_file).convert("RGB")
     img.thumbnail((max_size, max_size))
     buf = BytesIO()
@@ -504,7 +522,7 @@ def render_editor():
 
             photo_col1, photo_col2 = st.columns([1, 1])
             with photo_col1:
-                uploaded = st.file_uploader("Photo for this letter", type=["png", "jpg", "jpeg", "webp"], key=f"upload_{idx}")
+                uploaded = st.file_uploader("Photo or GIF for this letter", type=["png", "jpg", "jpeg", "webp", "gif"], key=f"upload_{idx}")
             with photo_col2:
                 if letter.get("photo"):
                     st.image(letter["photo"], width=140)
@@ -522,7 +540,12 @@ def render_editor():
                     letters[idx]["body"] = [p for p in body_text.split("\n") if p.strip()]
                     letters[idx]["sign"] = sign
                     if uploaded is not None:
-                        letters[idx]["photo"] = image_to_data_uri(uploaded)
+                        new_photo = image_to_data_uri(uploaded)
+                        if new_photo is not None:
+                            letters[idx]["photo"] = new_photo
+                        else:
+                            # oversized GIF etc. — error already shown, keep the old photo
+                            st.stop()
                     save_letters(letters)
                     st.success("Saved.")
                     st.rerun()
